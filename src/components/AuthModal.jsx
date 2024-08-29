@@ -17,7 +17,6 @@ const AuthModal = () => {
     <Dialog open={showAuthModal} onOpenChange={setShowAuthModal}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Autentikasi</DialogTitle>
         </DialogHeader>
         <Tabs defaultValue="signin">
           <TabsList className="grid w-full grid-cols-2">

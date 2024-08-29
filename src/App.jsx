@@ -8,6 +8,8 @@ import Explore from './pages/Explore';
 import Profile from './pages/Profile';
 import NewPost from './pages/NewPost';
 import Bookmarks from './pages/Bookmarks';
+import UserProfile from './pages/UserProfile';
+import { Toaster } from 'react-hot-toast';
 
 const App = () => {
   return (
@@ -20,9 +22,12 @@ const App = () => {
             <Route path="/profile" element={<Profile />} />
             <Route path="/new-post" element={<NewPost />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/user/:username" element={<UserProfile />} />
           </Routes>
         </Layout>
       </Router>
+      <Toaster />
+
     </AuthProvider>
   );
 };

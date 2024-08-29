@@ -15,11 +15,15 @@ function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState('');
   const [bio, setBio] = useState('');
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
 
   useEffect(() => {
     if (user) {
       fetchUserPosts();
       fetchUserProfile();
+      fetchFollowerCount();
+      fetchFollowingCount();
     } else {
       setLoading(false);
     }
@@ -68,6 +72,34 @@ function Profile() {
     }
   }
 
+  async function fetchFollowerCount() {
+    try {
+      const { count, error } = await supabase
+        .from('follows')
+        .select('id', { count: 'exact' })
+        .eq('followed_id', user.id);
+
+      if (error) throw error;
+      setFollowerCount(count);
+    } catch (error) {
+      console.error('Error mengambil jumlah pengikut:', error.message);
+    }
+  }
+
+  async function fetchFollowingCount() {
+    try {
+      const { count, error } = await supabase
+        .from('follows')
+        .select('id', { count: 'exact' })
+        .eq('follower_id', user.id);
+
+      if (error) throw error;
+      setFollowingCount(count);
+    } catch (error) {
+      console.error('Error mengambil jumlah yang diikuti:', error.message);
+    }
+  }
+
   async function handleEditProfile() {
     try {
       const { error } = await supabase
@@ -110,6 +142,10 @@ function Profile() {
             <h2 className="text-2xl font-bold">{fullName || 'Pengguna'}</h2>
           )}
           <p className="text-muted-foreground">@{user.user_metadata?.username || 'username'}</p>
+          <div className="flex gap-4 mt-2">
+            <span>{followerCount} Pengikut</span>
+            <span>{followingCount} Mengikuti</span>
+          </div>
         </div>
         <Button
           variant="outline"
@@ -130,9 +166,16 @@ function Profile() {
         <p className="mb-4">{bio}</p>
       )}
       <div className="grid gap-6">
-        {userPosts.map((post) => (
-          <PostCard key={post.id} post={post} currentUser={user} onPostUpdated={fetchUserPosts} />
-        ))}
+        {userPosts.map((post) => 
+          post && (
+            <PostCard 
+              key={post.id} 
+              post={post} 
+              currentUser={user} 
+              onPostUpdated={fetchUserPosts} 
+            />
+          )
+        )}
       </div>
     </div>
   );
