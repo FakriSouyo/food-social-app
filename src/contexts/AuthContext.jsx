@@ -1,12 +1,13 @@
-// src/contexts/AuthProvider.jsx
+// src/contexts/AuthContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { supabase } from '../service/SupabaseClient';
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     const session = supabase.auth.getSession();
@@ -14,7 +15,11 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser ? {
+        ...currentUser,
+        id: currentUser.id || currentUser.uid  // Gunakan uid jika id tidak tersedia
+      } : null);
     });
 
     return () => {
@@ -26,7 +31,9 @@ export const AuthProvider = ({ children }) => {
     signUp: (data) => supabase.auth.signUp(data),
     signIn: (data) => supabase.auth.signInWithPassword(data),
     signOut: () => supabase.auth.signOut(),
-    user
+    user,
+    showAuthModal,
+    setShowAuthModal  // Expose this method to allow components to show/hide the auth modal
   };
 
   return (
@@ -34,8 +41,8 @@ export const AuthProvider = ({ children }) => {
       {!loading && children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
+export function useAuth() {
   return useContext(AuthContext);
-};
+}

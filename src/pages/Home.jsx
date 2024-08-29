@@ -9,38 +9,42 @@ import PeopleYouMightKnow from '../components/PeopleYouMightKnow';
 const Home = () => {
   const [posts, setPosts] = useState([]);
 
+  const fetchPosts = async () => {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*, users:user_id(*)')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching posts:', error);
+    } else {
+      setPosts(data);
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
   }, []);
 
-  async function fetchPosts() {
-    try {
-      const { data, error } = await supabase
-        .from('posts')
-        .select(`
-          *,
-          users (
-            id,
-            username,
-            full_name,
-            avatar_url
-          )
-        `)
-        .order('created_at', { ascending: false });
+  const handlePostUpdated = () => {
+    fetchPosts();
+  };
 
-      if (error) throw error;
-      setPosts(data);
-    } catch (error) {
-      console.error('Error fetching posts:', error.message);
-    }
-  }
+  const handlePostDeleted = (deletedPostId) => {
+    setPosts(posts.filter(post => post.id !== deletedPostId));
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div className="md:col-span-2 space-y-6">
-        <NewPostForm onPostCreated={fetchPosts} />
+        {/* <NewPostForm onPostCreated={fetchPosts} /> */}
         {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard
+            key={post.id}
+            post={post}
+            onPostUpdated={handlePostUpdated}
+            onPostDeleted={handlePostDeleted}
+          />
         ))}
       </div>
       <div className="space-y-6">

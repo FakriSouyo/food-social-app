@@ -27,14 +27,14 @@ const TrendingTopics = () => {
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-lg font-semibold">Trending Food Topics</h2>
+        <h2 className="text-lg font-semibold">Food Topics</h2>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
           {topics.map((topic) => (
-            <Button key={topic.name} variant="ghost" className="w-full justify-start">
+            <Button key={topic.tag} variant="ghost" className="w-full justify-start">
               <Hash className="mr-2 h-4 w-4" />
-              <span>{topic.name}</span>
+              <span>{topic.tag}</span>
               <span className="ml-auto text-xs text-muted-foreground">{topic.count} posts</span>
             </Button>
           ))}

@@ -50,7 +50,7 @@ const PeopleYouMightKnow = () => {
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-lg font-semibold">People You Might Know</h2>
+        <h2 className="text-lg font-semibold">People you might know</h2>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
